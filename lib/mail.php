@@ -15,14 +15,14 @@ function enviar_email($destinatario, $assunto, $mensagemHTML, $nome_detino)
     $phpmailer = new PHPMailer(true);
     $phpmailer->SMTPDebug = 0;
     $phpmailer->isSMTP();
-    $phpmailer->Host = 'email-smtp.sa-east-1.amazonaws.com';
+    $phpmailer->Host = '$host';
     $phpmailer->SMTPAuth = true;
-    $phpmailer->Username = 'AKIATGRH2AXZM3UINXMD';
-    $phpmailer->Password = 'BOLYvaVZUNIKEmh+kxI/R2cbtLN0CCU0Xf/P0Khao8n8';
+    $phpmailer->Username = '$user';
+    $phpmailer->Password = '$password';
     $phpmailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $phpmailer->Port = 587;
 
-    $phpmailer->setFrom('carloseduardobezerradasilva2@gmail.com', 'Eduardo');
+    $phpmailer->setFrom('email', 'Eduardo');
     $phpmailer->addAddress($destinatario, $nome_detino);
 
     $phpmailer->isHTML(true);
