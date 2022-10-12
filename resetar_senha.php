@@ -5,7 +5,7 @@
         include ('lib/generateRandomString.php');
         include ('lib/mail.php');
 
-	    $email = $mysqli->escape_string($_POST['email']);
+	    $email = $mysqli->real_escape_string($_POST['email']);
 	    $sql_query = $mysqli->query("SELECT id, nome From usuarios WHERE email = '$email'");
         $result = $sql_query->fetch_assoc();
 

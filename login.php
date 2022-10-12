@@ -3,8 +3,8 @@
 $erro = false;
 if (isset($_POST['email']) || isset($_POST['senha'])){
     include "lib/conexao.php";
-    $email = $mysqli->escape_string($_POST['email']);
-    $senha = $mysqli->escape_string($_POST['senha']);
+    $email = $mysqli->real_escape_string($_POST['email']);
+    $senha = $mysqli->real_escape_string($_POST['senha']);
 
     $sql_query = $mysqli->query("SELECT * FROM usuarios where email = '$email' LIMIT 1") or die($mysqli->error);
     $usuario = $sql_query->fetch_assoc();

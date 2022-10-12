@@ -6,10 +6,10 @@ include ('lib/protect.php');
 protect(1);
 
 if (isset($_POST['enviar'])){
-    $titulo = $mysqli->escape_string($_POST['titulo']);
-    $descricao_curta = $mysqli->escape_string($_POST['descricao_curta']);
-    $preco = $mysqli->escape_string($_POST['preco']);
-    $conteudo = $mysqli->escape_string($_POST['conteudo']);
+    $titulo = $mysqli->real_escape_string($_POST['titulo']);
+    $descricao_curta = $mysqli->real_escape_string($_POST['descricao_curta']);
+    $preco = $mysqli->real_escape_string($_POST['preco']);
+    $conteudo = $mysqli->real_escape_string($_POST['conteudo']);
 
     $erro = array();
     if (empty($titulo))
