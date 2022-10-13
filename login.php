@@ -3,21 +3,23 @@
 $erro = false;
 if (isset($_POST['email']) || isset($_POST['senha'])){
     include "lib/conexao.php";
-    $email = $mysqli->real_escape_string($_POST['email']);
-    $senha = $mysqli->real_escape_string($_POST['senha']);
+    $email = $mysqli->real_escape_string(filter_input(INPUT_POST,'email', FILTER_SANITIZE_EMAIL));
+    $senha = $mysqli->real_escape_string(filter_input(INPUT_POST,'senha'));
 
     $sql_query = $mysqli->query("SELECT * FROM usuarios where email = '$email' LIMIT 1") or die($mysqli->error);
     $usuario = $sql_query->fetch_assoc();
-    if (password_verify($senha, $usuario['senha'])){
-        if (!isset($_SESSION))
-            session_start();
-        $_SESSION['usuario'] = $usuario['id'];
-        $_SESSION['admin'] = $usuario['admin'];
-        header("Location: index.php");
+    if ($email == $usuario['email'] && $email != null) {
+	    if (password_verify($senha, $usuario['senha'])) {
+		    if (!isset($_SESSION))
+			    session_start();
+		    $_SESSION['usuario'] = $usuario['id'];
+		    $_SESSION['admin'] = $usuario['admin'];
+		    header("Location: index.php");
+	    }else
+		    $erro = "Senha inválida!";
     }else
-        $erro = "Senha inválida!";
+        $erro = "Email inválido!";
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -99,7 +101,7 @@ if (isset($_POST['email']) || isset($_POST['senha'])){
                                 }
                                 ?>
                                 <div class="input-group">
-                                    <input name="email" type="email" class="form-control" placeholder="Seu endereço de email">
+                                    <input name="email" type="email" class="form-control" value="<?= filter_input(INPUT_POST,'email', FILTER_SANITIZE_EMAIL); ?>" placeholder="Seu endereço de email">
                                     <span class="md-line"></span>
                                 </div>
                                 <div class="input-group">
