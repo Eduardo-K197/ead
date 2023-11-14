@@ -17,7 +17,7 @@ $dados_usuario = $sql_query_admin->fetch_assoc();
 
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
     <title>THE NEW SCHOOl </title>
@@ -48,9 +48,68 @@ $dados_usuario = $sql_query_admin->fetch_assoc();
     <!-- Style.css -->
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
     <link rel="stylesheet" type="text/css" href="assets/css/jquery.mCustomScrollbar.css">
+    <!-- referencia para os icones de sol e lua serem bem carregados -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+
+<!-- aqui se inicia o style de tudo que fiz botão de mudança de tema e imagem de fundo --> 
+    <style>
+
+        .checkbox {
+        opacity: 0;
+        position: absolute;
+        }
+
+        .label {
+        background-color: #111;
+        border-radius: 50px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        padding: 5px;
+        position: relative;
+        height: 26px;
+        width: 50px;
+        transform: scale(1);
+        margin-top: 28px;
+        }
+
+
+        .label .ball {
+        background-color: #fff;
+        border-radius: 50%;
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        height: 22px;
+        width: 22px;
+        transform: translateX(0px);
+        transition: transform 0.2s linear;
+        }
+
+        .checkbox:checked + .label .ball {
+        transform: translateX(24px);
+        } 
+
+        .fa-moon {
+        color: #f1c40f;
+        }
+
+        .fa-sun {
+        color: #f39c12;
+        }
+        .theme-loader{
+            background-color:#B5BEC6
+        }
+    </style>
+
+<!-- script para usar o Glanguage para tradução -->
+<script>window.gtranslateSettings = {"default_language":"pt","languages":["pt","en"],"wrapper_selector":".gtranslate_wrapper","alt_flags":{"en":"usa","pt":"brazil"}}</script>
+<script src="https://cdn.gtranslate.net/widgets/latest/flags.js" defer></script>
 </head>
 
-<body>
+<body data-translate>
 <!-- Pre-loader start -->
 <div class="theme-loader">
     <div class="ball-scale">
@@ -100,10 +159,10 @@ $dados_usuario = $sql_query_admin->fetch_assoc();
                     <a class="mobile-menu" id="mobile-collapse" href="#!">
                         <i class="ti-menu"></i>
                     </a>
-                    <a class="mobile-search morphsearch-search" href="#">
+                    <a class="mobile-search morphsearch-search" href="#!">
                         <i class="ti-search"></i>
                     </a>
-                    <a href="layout/index.html">
+                    <a href="index.php?p=inicial">
                         <img class="img-fluid" src="assets/images/logo.png" alt="Theme-Logo"/>
                     </a>
                     <a class="mobile-options">
@@ -116,14 +175,29 @@ $dados_usuario = $sql_query_admin->fetch_assoc();
                         <li>
                             <div class="sidebar_toggle"><a href="javascript:void(0)"><i class="ti-menu"></i></a></div>
                         </li>
-
-                        <li>
-                            <a href="#!" onclick="javascript:toggleFullScreen()">
-                                <i class="ti-fullscreen"></i>
-                            </a>
-                        </li>
                     </ul>
-                    <ul class="nav-right">
+                    
+
+                    <ul class="nav-right">  
+                    <!-- bloco de traduçao da pagina -->
+                        <li>
+                            <div class="gtranslate_wrapper"></div>
+                        </li>
+                        <!-- fim do bloco de tradução -->
+
+                        <!-- botao da mudança de tema  -->
+                        <li class="">
+                            <div>
+                            <input type="checkbox" class="checkbox" id="chk" />
+                                <label class="label" for="chk">
+                                    <i class="fas fa-sun"></i>
+                                    <i class="fas fa-moon"></i>
+                                    <div class="ball"></div>
+                                </label>
+                            </div>
+                        </li>
+                        <!-- fim do botao de mudança de tema -->
+                        
                         <?php if (!isset($_SESSION['admin']) || !$_SESSION['admin']) { ?>
                         <li class="header-notification">
                             <a href="#!">
@@ -326,6 +400,96 @@ $dados_usuario = $sql_query_admin->fetch_assoc();
 <script src="assets/js/pcoded.min.js"></script>
 <script src="assets/js/demo-12.js"></script>
 <script src="assets/js/jquery.mCustomScrollbar.concat.min.js"></script>
+
+
+<!-- inicio do script do tema -->
+<script type="text/javascript">
+    function toggleTheme() {
+        console.log("toggleTheme chamada");
+
+        var currentTheme = localStorage.getItem('theme');
+        var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+        var layout = $('.pcoded').attr("layout-type");
+        if (layout === 'dark') {
+            $('.pcoded').attr("layout-type", "light");
+            $('.pcoded-header').attr("header-theme", "theme1");
+            $('.pcoded-navbar').attr("navbar-theme", "themelight1");
+            $('.navbar-logo').attr("logo-theme", "theme3");
+            $('.pcoded-navbar').css("color", "#000");
+            $('.main-body .page-wrapper .page-header-title h4').css('color', '#303548');//cor do titulo que nao muda com essa funçao por isso adicionei essa que muda diretamente 
+            $('span').css('color', '#303548');
+            $('a').css('color', '#303548');
+            $('ul.show-notification.profile-notification a').css('color','#303548');
+            $('.btn-inverse').removeClass('btn-inverse').addClass('btn-white');
+            localStorage.setItem('theme', 'light'); // Armazena o tema no localStorage
+        } else {
+            $('.pcoded').attr("layout-type", "dark");
+            $('.pcoded-header').attr("header-theme", "theme6");
+            $('.pcoded-navbar').attr("navbar-theme", "theme1");
+            $('.navbar-logo').attr("logo-theme", "theme6");
+            $('.pcoded-navbar').css("color", "#fff");
+            $('.main-body .page-wrapper .page-header-title h4').css('color', '#fff');
+            $('span').css('color', '#fff');
+            $('a').css('color', '#ffffff');
+            $('ul.show-notification.profile-notification a').css('color','#303548');
+            $('.btn-white').removeClass('btn-white').addClass('btn-inverse');
+            localStorage.setItem('theme', newTheme);
+
+        }
+        
+    }
+
+    function applyTheme() {
+    var currentTheme = localStorage.getItem('theme');
+    var layout = $('.pcoded').attr("layout-type");
+    
+    if (currentTheme === 'dark') {
+        $('.pcoded').attr("layout-type", "dark");
+        $('.pcoded-header').attr("header-theme", "theme6");
+        $('.pcoded-navbar').attr("navbar-theme", "theme1");
+        $('.navbar-logo').attr("logo-theme", "theme6");
+        $('.pcoded-navbar').css("color", "#fff");
+        $('.main-body .page-wrapper .page-header-title h4').css('color', '#fff');
+        $('span').css('color', '#fff');
+        $('a').css('color', '#ffffff');
+        $('ul.show-notification.profile-notification a').css('color','#303548');
+        $('.btn-white').removeClass('btn-white').addClass('btn-inverse');
+    } else {
+        $('.pcoded').attr("layout-type", "light");
+        $('.pcoded-header').attr("header-theme", "theme1");
+        $('.pcoded-navbar').attr("navbar-theme", "themelight1");
+        $('.navbar-logo').attr("logo-theme", "theme3");
+        $('.pcoded-navbar').css("color", "#000");
+        $('.main-body .page-wrapper .page-header-title h4').css('color', '#303548');
+        $('span').css('color', '#303548');
+        $('a').css('color', '#303548');
+        $('ul.show-notification.profile-notification a').css('color','#303548');
+        $('.btn-inverse').removeClass('btn-inverse').addClass('btn-white');
+    }
+
+}
+
+$(document).ready(function () {
+    var savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        applyTheme(); // Aplicar o tema salvo ao carregar a página
+    }
+
+    const chk = document.getElementById('chk');
+        if (savedTheme) {
+            document.body.classList.add(savedTheme); // Adiciona a classe do tema salvo ao corpo do documento
+            chk.checked = savedTheme === 'dark'; // Marca o checkbox se o tema salvo for escuro
+        }
+        chk.addEventListener('change', () => {
+        toggleTheme();
+    });
+});
+
+
+</script>
+
+<!-- fim do script do tema  -->
 </body>
 
 </html>

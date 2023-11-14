@@ -58,6 +58,77 @@
     <link rel="stylesheet" type="text/css" href="assets/icon/icofont/css/icofont.css">
     <!-- Style.css -->
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+     <!-- referencia para os icones de sol e lua serem bem carregados -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+<!-- style do botao de troca de tema e do background -->
+<style>
+    
+    .checkbox {
+    opacity: 0;
+    position: absolute;
+    }
+
+    .label {
+    background-color: #111;
+    border-radius: 50px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 5px;
+    position: relative;
+    height: 26px;
+    width: 50px;
+    transform: scale(1);
+    margin-top: 28px;
+    }
+
+
+    .label .ball {
+    background-color: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    height: 22px;
+    width: 22px;
+    transform: translateX(0px);
+    transition: transform 0.2s linear;
+    }
+
+    .checkbox:checked + .label .ball {
+    transform: translateX(24px);
+    } 
+
+    .fa-moon {
+    color: #f1c40f;
+    }
+
+    .fa-sun {
+    color: #f39c12;
+    }
+    .common-img-bg {
+         background-image: url('./assets/images/bg.jpg')!important;
+         background-size:cover
+    }
+    .common-img-bg {
+        height: 100%;
+        position: fixed;
+        width: 100%;
+        min-height: 100vh;
+    }
+    .dark-mode .common-img-bg { 
+        background-image: url('./bg2.avif')!important;
+        background-size:cover!important;
+        background-repeat: no-repeat!important;
+    }
+
+
+
+
+</style>
+<!-- fim do style para a troca de tema  -->
 </head>
 
 <body class="fix-menu">
@@ -80,7 +151,7 @@
 </div>
     <!-- Pre-loader end -->
 
-    <section class="login p-fixed d-flex text-center bg-primary common-img-bg">
+    <section class="login p-fixed d-flex text-center bg-dark common-img-bg"><!---aqui mudei o back ground da pagina de esqueci a senha -->
         <!-- Container-fluid starts -->
         <div class="container">
             <div class="row">
@@ -96,6 +167,16 @@
                                     <div class="col-md-12">
                                         <h3 class="text-left txt-primary">Esqueceu sua senha?</h3>
                                     </div>
+                                        <!-- botao da troca de tema  -->                                    
+                                    <div>
+                                            <input type="checkbox" class="checkbox" id="chk" />
+                                                <label class="label" for="chk">
+                                                    <i class="fas fa-sun"></i>
+                                                    <i class="fas fa-moon"></i>
+                                                    <div class="ball"></div>
+                                                </label>
+                                            </div>
+                                       <!-- fim do botao troca de tema -->
                                 </div>
                                 <hr/>
 	                            <?php if($msg !== false) {
@@ -118,7 +199,7 @@
                                 </div>
                                 <div class="row m-t-30">
                                     <div class="col-md-12">
-                                        <button type="submit" class="btn btn-primary btn-md btn-block waves-effect text-center m-b-20">Enviar minha senha</button>
+                                        <button type="submit" class="btn btn-inverse btn-md btn-block waves-effect text-center m-b-20">Enviar minha senha</button> <!---cor do botao de enviar-->
                                     </div>
                                 </div>
                                 </div>
@@ -189,6 +270,28 @@
     <script type="text/javascript" src="assets/js/modernizr/modernizr.js"></script>
     <script type="text/javascript" src="assets/js/modernizr/css-scrollbars.js"></script>
     <script type="text/javascript" src="assets/js/common-pages.js"></script>
+<!-- script da troca de tema para identificar qual o ultimo tema de preferenca que esta no local storage -->
+    <script>
+        $(document).ready(function() {
+            // Verificar se o tema está salvo no localStorage
+            if(localStorage.getItem('theme') === 'dark') {
+                $('body').addClass('dark-mode');
+                $('#chk').prop('checked', true); // Marcar o checkbox se o tema for escuro
+            }
+
+            // Adicionar ou remover a classe dark-mode ao clicar no checkbox
+            $('#chk').change(function() {
+                if (this.checked) {
+                    $('body').addClass('dark-mode');
+                    localStorage.setItem('theme', 'dark'); // Salvar tema no localStorage
+                } else {
+                    $('body').removeClass('dark-mode');
+                    localStorage.setItem('theme', 'light'); // Salvar tema no localStorage
+                }
+            });
+        });
+    </script>
+<!-- fim do script da troca de tema  -->
 </body>
 
 </html>

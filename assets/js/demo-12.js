@@ -311,6 +311,9 @@ $(document).ready(function () {
 
 
     /*  collapseable Left Header Change Function Close here*/
+    
+// adição da cor do titulo que estava sumindo quando mudava o tema
+    $('.main-body .page-wrapper .page-header-title h4').css('color', '#FF5733');
 
 
 });
