@@ -36,7 +36,8 @@ if (!empty($_POST['estrela'])) {
 	}
 	
 	// Redirecione para evitar envios duplicados ao atualizar a página
-	// header("Location: ".$_SERVER['PHP_SELF']);exit;
+//	header("Location: ");
+//	exit;
 }
 
 if (isset($_SESSION['msg'])) {
@@ -75,7 +76,7 @@ if (isset($_SESSION['msg'])) {
 
 <div class="page-body">
     <div class="row">
-	    <?php while ($curso = $cursos_query->fetch_assoc()) { ?>
+		<?php while ($curso = $cursos_query->fetch_assoc()) { ?>
             <div class="col-sm-4">
                 <div class="card">
                     <div class="card-header">
@@ -84,86 +85,128 @@ if (isset($_SESSION['msg'])) {
                     <div class="card-block">
                         <img src="<?php echo $curso['imagem']; ?>" class="img-fluid mb-3" alt="">
                         <p>
-						    <?php echo $curso['descricao_curta']; ?>
+							<?php echo $curso['descricao_curta']; ?>
                         </p>
                         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
                         <style>
-                            .estrelas{
+                            .estrelas_<?php echo $curso['id']; ?>{
                                 display: flex;
                                 font-size: 25px;
                                 align-items: center;
                                 justify-content: center;
                             }
 
-                            .estrelas input[type=radio] {
+                            .estrelas_<?php echo $curso['id']; ?> input[type=radio] {
                                 display: none;
                             }
 
-                            .estrelas label i.fa:before {
+                            .estrelas_<?php echo $curso['id']; ?> label i.fa:before {
                                 content: '\f005';
                                 color: #FC0;
                             }
 
-                            .estrelas input[type=radio]:checked ~ label i.fa:before {
+                            .estrelas_<?php echo $curso['id']; ?> input[type=radio]:checked ~ label i.fa:before {
                                 color: #CCC;
                             }
                         </style>
 
                         <form method="POST" enctype="multipart/form-data">
-                            <div class="estrelas">
-                                <input type="radio" id="vazio<?php echo $curso['id']; ?>" name="estrela"<?php echo $curso['id']; ?> value="" checked>
-                                <label for="estrela_um<?php echo $curso['id']; ?>"><i class="fa"></i></label>
-                                <input type="radio" id="estrela_um<?php echo $curso['id']; ?>" name="estrela"<?php echo $curso['id']; ?> value="1">
-                                <label for="estrela_dois<?php echo $curso['id']; ?>"><i class="fa"></i></label>
-                                <input type="radio" id="estrela_dois<?php echo $curso['id']; ?>" name="estrela"<?php echo $curso['id']; ?> value="2">
-                                <label for="estrela_tres<?php echo $curso['id']; ?>"><i class="fa"></i></label>
-                                <input type="radio" id="estrela_tres<?php echo $curso['id']; ?>" name="estrela"<?php echo $curso['id']; ?> value="3">
-                                <label for="estrela_quatro<?php echo $curso['id']; ?>"><i class="fa"></i></label>
-                                <input type="radio" id="estrela_quatro<?php echo $curso['id']; ?>" name="estrela"<?php echo $curso['id']; ?> value="4">
-                                <label for="estrela_cinco<?php echo $curso['id']; ?>"><i class="fa"></i></label>
-                                <input type="radio" id="estrela_cinco<?php echo $curso['id']; ?>" name="estrela"<?php echo $curso['id']; ?> value="5">
-                                <input type="hidden" name="curso_id" value="<?php echo $curso['id']; ?>">
+                            <div class="estrelas_<?php echo $curso['id']; ?>">
+								<?php
+								// Verifica se há uma avaliação para o usuário atual no curso
+								$curso_id = $curso['id'];
+								$usuario_id = $_SESSION['usuario'];
+								
+								$avaliacao_existente_query = $mysqli->query("SELECT qnt_estrela FROM avaliacos WHERE curso_id = '$curso_id' AND usuario_id = '$usuario_id'");
+								
+								if ($avaliacao_existente_query->num_rows > 0) {
+									// Se houver uma avaliação existente, obtenha o valor de qnt_estrela
+									$avaliacao_existente = $avaliacao_existente_query->fetch_assoc();
+									$qnt_estrela = $avaliacao_existente['qnt_estrela'];
+									
+									// Exibe as estrelas de acordo com o valor de qnt_estrela
+									for ($i = 1; $i <= 5; $i++) {
+										echo '<input type="radio" id="estrela' . $i . $curso_id . '" name="estrela" value="' . $i . '"';
+										if ($i == $qnt_estrela) {
+											echo ' checked';
+										}
+										echo '>';
+										echo '<label for="estrela' . $i . $curso_id . '"><i class="fa"></i></label>';
+									}
+								} else {
+									// Se não houver avaliação existente, exibe estrelas padrão
+									for ($i = 1; $i <= 5; $i++) {
+										echo '<input type="radio" id="estrela' . $i . $curso_id . '" name="estrela" value="' . $i . '">';
+										echo '<label for="estrela' . $i . $curso_id . '"><i class="fa"></i></label>';
+									}
+								}
+								?>
+                                <input type="hidden" name="curso_id" value="<?php echo $curso_id; ?>">
+                                <input type="submit" class="btn btn-primary btn-round" value="Avaliar" style="margin-left: 5%">
                             </div>
-                            <input type="submit" class="btn form-control btn-primary btn-round" value="Avaliar">
                         </form>
-					    <?php
-					    $curso_id = $curso['id'];
-					    $usuario_id = $_SESSION['usuario'];
-					    $query_avaliacao = $mysqli->query("SELECT * FROM avaliacos WHERE curso_id = $curso_id AND usuario_id = $usuario_id");
-					    
-					    if ($query_avaliacao === false) {
-						    // Verifique se a consulta falhou
-						    echo "Erro na consulta SQL: " . $mysqli->error;
-					    } else {
-						    if ($query_avaliacao->num_rows > 0) {
-							    // Se o usuário já avaliou o curso, exiba a avaliação existente para edição
-							    $avaliacao_existente = $query_avaliacao->fetch_assoc();
-							    $avaliacao_atual = $avaliacao_existente['qnt_estrela'];
-							    ?>
-                                
-                                <script>// Verifica se a avaliação já está armazenada no localStorage
-                                var avaliacaoAtual = localStorage.getItem('avaliacaoAtual<?php echo $curso['id']; ?>');
-                                if (avaliacaoAtual !== null) {
-                                    // Se a avaliação existe no localStorage, defina a estrela correspondente como selecionada
-                                    document.querySelector('#vazio<?php echo $curso['id']; ?>').checked = true;
-                                    document.querySelector('#estrela' + avaliacaoAtual + '<?php echo $curso['id']; ?>').checked = true;
-                                    }
-                                </script>
-
+						
+						<?php
+						$query_avaliacao = $mysqli->query("SELECT * FROM avaliacos WHERE curso_id = '$curso_id' AND usuario_id = '$usuario_id'");
+						
+						if ($query_avaliacao === false) {
+							// Verifique se a consulta falhou
+							echo "Erro na consulta SQL: " . $mysqli->error;
+						} else {
+							if ($query_avaliacao->num_rows > 0) {
+								// Se o usuário já avaliou o curso, exiba a avaliação existente para edição
+								$avaliacao_existente = $query_avaliacao->fetch_assoc();
+								$avaliacao_atual = $avaliacao_existente['qnt_estrela'];
+								?>
                                 <script>
-                                while true
-                                 document.querySelectorAll('input[name="estrela<?php echo $curso['id']; ?>"]').forEach(function(input) {
-                                    input.addEventListener('change', function() {
-                                        var estrelaSelecionada = this.value;
-                                        localStorage.setItem('avaliacaoAtual<?php echo $curso['id']; ?>', estrelaSelecionada);
-                                    });
-                                });
-                                </script>
+                                    document.addEventListener('DOMContentLoaded', function () {
+										<?php
+										$query_avaliacao = $mysqli->query("SELECT * FROM avaliacos WHERE curso_id = '$curso_id' AND usuario_id = '$usuario_id'");
+										$avaliacao_atual = isset($query_avaliacao) ? $query_avaliacao->fetch_assoc()['qnt_estrela'] : null;
+										?>
 
-							    <?php
-						    }
-					    }
-					    ?>
+                                        // Se houver uma avaliação armazenada no banco de dados, defina a estrela correspondente como selecionada
+                                        var avaliacaoAtual = <?php echo isset($avaliacao_atual) ? $avaliacao_atual : 'null'; ?>;
+                                        var cursoId = '<?php echo $curso_id; ?>';
+                                        var estrelasContainer = document.querySelector('.estrelas_' + cursoId);
+
+                                        if (avaliacaoAtual !== null) {
+                                            estrelasContainer.classList.add('rated-' + avaliacaoAtual);
+                                        }
+
+                                        // Adicione um evento de clique às estrelas para atualizar o valor
+                                        estrelasContainer.addEventListener('click', function (event) {
+                                            if (event.target.matches('input[name="estrela"]')) {
+                                                var novaAvaliacao = event.target.value;
+
+                                                // Atualize a avaliação no banco de dados
+                                                fetch('<?php echo $_SERVER['PHP_SELF']; ?>', {
+                                                    method: 'POST',
+                                                    body: new URLSearchParams({
+                                                        estrela: novaAvaliacao,
+                                                        curso_id: cursoId
+                                                    }),
+                                                    headers: {
+                                                        'Content-Type': 'application/x-www-form-urlencoded'
+                                                    }
+                                                }).then(response => response.json())
+                                                    .then(data => {
+                                                        console.log(data);
+                                                        estrelasContainer.classList.remove('rated-1', 'rated-2', 'rated-3', 'rated-4', 'rated-5');
+                                                        if (novaAvaliacao !== null) {
+                                                            estrelasContainer.classList.add('rated-' + novaAvaliacao);
+                                                        }
+                                                    })
+                                                    .catch(error => console.error('Erro:', error));
+                                            }
+                                        });
+                                    });
+                                </script>
+								
+								<?php
+							}
+						}
+						?>
                         <form action="index.php">
                             <input type="hidden" name="p" value="acessar">
                             <input type="hidden" name="id" value="<?php echo $curso['id']; ?>">
@@ -172,6 +215,6 @@ if (isset($_SESSION['msg'])) {
                     </div>
                 </div>
             </div>
-	    <?php } ?>
+		<?php } ?>
     </div>
 </div>

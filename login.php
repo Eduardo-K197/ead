@@ -1,24 +1,27 @@
 <?php
-
 $erro = false;
-if (isset($_POST['email']) || isset($_POST['senha'])){
-    include "lib/conexao.php";
-    $email = $mysqli->real_escape_string(filter_input(INPUT_POST,'email', FILTER_SANITIZE_EMAIL));
-    $senha = $mysqli->real_escape_string(filter_input(INPUT_POST,'senha'));
 
-    $sql_query = $mysqli->query("SELECT * FROM usuarios where email = '$email' LIMIT 1") or die($mysqli->error);
-    $usuario = $sql_query->fetch_assoc();
-    if ($email == $usuario['email'] && $email != null) {
-	    if (password_verify($senha, $usuario['senha'])) {
-		    if (!isset($_SESSION))
-			    session_start();
-		    $_SESSION['usuario'] = $usuario['id'];
-		    $_SESSION['admin'] = $usuario['admin'];
-		    header("Location: index.php");
-	    }else
-		    $erro = "Senha inválida!";
-    }else
-        $erro = "Email inválido!";
+if (isset($_POST['email']) || isset($_POST['senha'])) {
+	include "lib/conexao.php";
+	$email = $mysqli->real_escape_string(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL));
+	$senha = $mysqli->real_escape_string(filter_input(INPUT_POST, 'senha'));
+	
+	$sql_query = $mysqli->query("SELECT * FROM usuarios where email = '$email' LIMIT 1") or die($mysqli->error);
+	$usuario = $sql_query->fetch_assoc();
+	
+	if ($usuario !== null && $email == $usuario['email'] && $email != null) {
+		if (password_verify($senha, $usuario['senha'])) {
+			if (!isset($_SESSION))
+				session_start();
+			$_SESSION['usuario'] = $usuario['id'];
+			$_SESSION['admin'] = $usuario['admin'];
+			header("Location: index.php");
+		} else {
+			$erro = "Senha inválida!";
+		}
+	} else {
+		$erro = "Email inválido!";
+	}
 }
 ?>
 
